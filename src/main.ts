@@ -26,10 +26,11 @@ async function bootstrap() {
     .setTitle('Project Docs')
     .setDescription('All the endpoints for the project are goint to be shown here')
     .setVersion('1.0')
+    .addBearerAuth()
     .addTag('Endpoints:')
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('docs', app, documentFactory);
+  SwaggerModule.setup('', app, documentFactory);
 
 
   await app.listen(process.env.PORT ?? 3000);
