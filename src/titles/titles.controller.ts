@@ -24,8 +24,8 @@ import { UpdateTitleDto } from './dto/update-title.dto';
 import { AuthGuard } from 'src/auth/guard/auth.guard';
 
 @ApiTags('Titles')
-@ApiBearerAuth()
-@UseGuards(AuthGuard)
+// @ApiBearerAuth()
+// @UseGuards(AuthGuard)
 @Controller('titles')
 export class TitlesController {
   constructor(private readonly titlesService: TitlesService) {}
