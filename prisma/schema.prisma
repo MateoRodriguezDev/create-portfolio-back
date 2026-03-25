@@ -23,9 +23,26 @@ model User {
   userName  String   @db.VarChar(100)
   email     String   @unique(map: "email") @db.VarChar(150)
   password  String   @db.VarChar(255)
+  profilePictureURL  String   @db.VarChar(255)
   role      Role     @default(user)
   active    Boolean  @default(true)
+
+  titleId           Int?
+  title             Title?   @relation(fields: [titleId], references: [id])
+
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+}
+
+
+model Title {
+  id          Int         @id @default(autoincrement())
+  titleName      String      @db.VarChar(100)
+  descripcion String?     @db.Text
+  titleIconURL String?     @db.Text
+  active      Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @default(now())
+  users      User[]
 }
 
