@@ -1,0 +1,26 @@
+import * as bcrypt from 'bcrypt'
+
+
+/**
+ * @description
+ * Hashea la contraseña con bcrypt y un salt de 10
+ * 
+ * @param {string} password - La contraseña en texto plano que será hasheada
+ * @returns {Promise<string>} El hash de la contraseña
+ */
+export const hashPassword = async (password: string): Promise<string> => {
+  const salt = await bcrypt.genSalt(10);
+  return await bcrypt.hash(password, salt);
+};
+
+/**
+ * @description
+ * Verifica si la contraseña hasheada es correcta
+ * 
+ * @param {string} enteredPassword - La contraseña que puso el usuario
+ * @param {string} storedHash - La contraseña hasheada
+ * @returns {Promise<boolean>} `true` si las contraseñas coinciden, `false` en caso contrario
+ */
+export const checkPassword = async (enteredPassword: string, storedHash: string): Promise<boolean> => {
+  return await bcrypt.compare(enteredPassword, storedHash)
+}
