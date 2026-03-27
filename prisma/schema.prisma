@@ -18,46 +18,91 @@ enum Role {
 }
 
 model User {
-  id        Int      @id @default(autoincrement()) @db.UnsignedInt
-  fullName  String   @db.VarChar(100)
-  userName  String   @db.VarChar(100)
-  email     String   @unique(map: "email") @db.VarChar(150)
-  password  String   @db.VarChar(255)
-  profilePictureURL  String   @db.VarChar(255)
-  role      Role     @default(user)
-  active    Boolean  @default(true)
+  id                Int     @id @default(autoincrement()) @db.UnsignedInt
+  fullName          String  @db.VarChar(100)
+  userName          String  @db.VarChar(100)
+  email             String  @unique(map: "email") @db.VarChar(150)
+  password          String  @db.VarChar(255)
+  profilePictureURL String  @db.VarChar(255)
+  role              Role    @default(user)
+  active            Boolean @default(true)
 
+  titleId Int?
+  title   Title? @relation(fields: [titleId], references: [id])
 
-  titleId           Int?
-  title             Title?   @relation(fields: [titleId], references: [id])
-
-  links             Link[]
+  links    Link[]
+  projects Project[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 }
 
-
 model Title {
-  id          Int         @id @default(autoincrement())
-  titleName      String      @db.VarChar(100)
-  descripcion String?     @db.Text
-  titleIconURL String?     @db.Text
-  active      Boolean     @default(true)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @default(now())
-  users      User[]
+  id           Int      @id @default(autoincrement())
+  titleName    String   @db.VarChar(100)
+  descripcion  String?  @db.Text
+  titleIconURL String?  @db.Text
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now())
+  users        User[]
 }
 
 model Link {
-  id          Int      @id @default(autoincrement())
-  url         String   @db.VarChar(255)
-  descripcion String?  @db.VarChar(255)
+  id          Int     @id @default(autoincrement())
+  url         String  @db.VarChar(255)
+  descripcion String? @db.VarChar(255)
 
-  userId      Int      @db.UnsignedInt
-  user        User     @relation(fields: [userId], references: [id])
+  userId Int  @db.UnsignedInt
+  user   User @relation(fields: [userId], references: [id])
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now()) @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
+model TechCategory {
+  id               Int     @id @default(autoincrement())
+  techCategoryName String  @db.VarChar(50)
+  imgURL           String?  @db.VarChar(255)
+  descripcion      String? @db.VarChar(255)
+
+  active Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  Technologies Technology[]
+}
+
+model Technology {
+  id          Int     @id @default(autoincrement())
+  techName    String  @db.VarChar(50)
+  imgURL      String  @db.VarChar(255)
+  descripcion String? @db.VarChar(255)
+
+  techCategoryId Int          
+  techCategory   TechCategory @relation(fields: [techCategoryId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  projects Project[]
+}
+
+model Project {
+  id          Int     @id @default(autoincrement())
+  projectName String  @db.VarChar(50)
+  imgURL      String  @db.VarChar(255)
+  descripcion String? @db.VarChar(255)
+
+  active Boolean @default(true)
+
+  userId Int  @db.UnsignedInt
+  user   User @relation(fields: [userId], references: [id])
+
+  technologyId Int        
+  technology   Technology @relation(fields: [technologyId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
