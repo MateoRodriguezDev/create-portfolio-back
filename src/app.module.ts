@@ -7,8 +7,11 @@ import { LinksModule } from './links/links.module';
 import { TechCategoriesModule } from './tech-categories/tech-categories.module';
 import { TechnologiesModule } from './technologies/technologies.module';
 import { ProjectsModule } from './projects/projects.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [PrismaModule, UsersModule, AuthModule, TitlesModule, LinksModule, TechCategoriesModule, TechnologiesModule, ProjectsModule],
+  imports: [ConfigModule.forRoot({
+      isGlobal: true, // 👈 clave
+    }),PrismaModule, UsersModule, AuthModule, TitlesModule, LinksModule, TechCategoriesModule, TechnologiesModule, ProjectsModule],
 })
 export class AppModule {}
