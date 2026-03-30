@@ -10,6 +10,7 @@ import {
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
+import { Transform } from 'class-transformer';
 
 export class CreateUserDto {
   @ApiProperty({ example: 'Juan Perez', description: 'Nombre del usuario' })
@@ -26,6 +27,7 @@ export class CreateUserDto {
     description: 'URL de la imagen de perfil',
   })
   @IsUrl()
+  @IsOptional()
   profilePictureURL: string;
 
   @ApiProperty({
@@ -35,7 +37,7 @@ export class CreateUserDto {
     default: 'user',
   })
   @IsEnum(Role)
-  role?: Role;
+  role: Role;
 
   @ApiProperty({
     example: 'juan.perez@mail.com',
@@ -63,6 +65,10 @@ export class CreateUserDto {
   active?: boolean;
 
   @ApiProperty({ example: 1, description: 'ID del titulo del usuario' })
+  @Transform(({ value }) => {
+  const parsed = parseInt(value, 10);
+  return isNaN(parsed) ? value : parsed; 
+})
   @IsInt()
   titleId: number;
 }

@@ -30,7 +30,6 @@ export class FirebaseAdmin implements OnApplicationBootstrap {
         credential: admin.credential.cert(serviceAccount),
         storageBucket: storageBucket,
       });
-
       console.log('Conexion a firebase exitosa');
     }
   }

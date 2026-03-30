@@ -7,13 +7,22 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { hashPassword } from 'src/helpers/bcrypt.helper';
+import { UploadFileService } from 'src/modules/upload-file/upload-file.service';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private readonly uploadService: UploadFileService) {}
 
-  async createUser(createUserDto: CreateUserDto) {
+  
+
+  async createUser(createUserDto: CreateUserDto, file: Express.Multer.File) {
     createUserDto.password = await hashPassword(createUserDto.password);
+
+    //Subo la imagen y agrego su url al DTO
+    if (file) {
+      const url = await this.uploadService.uploadIMG(file, 'users/profiles');
+    createUserDto.profilePictureURL = url;
+    }
 
     return this.prisma.user.create({ data: createUserDto });
   }
@@ -68,8 +77,20 @@ export class UsersService {
   }
 
   async removeUser(id: number) {
-    await this.findOneUser(id);
+    const user = await this.findOneUser(id);
+
+    //Elimino la imagen del perfil del usuario
+    this.uploadService.deleteImg(user.profilePictureURL)
 
     return this.prisma.user.update({ where: { id }, data: { active: false } });
   }
+
+
+
+  
+
+
 }
+
+
+

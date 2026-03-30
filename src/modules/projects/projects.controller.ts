@@ -6,19 +6,23 @@ import {
   Patch,
   Param,
   Delete,
-  ParseIntPipe
+  ParseIntPipe,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 
 import {
   ApiTags,
   ApiOperation,
   ApiResponse,
-  ApiParam
+  ApiParam,
+  ApiConsumes,
 } from '@nestjs/swagger';
 
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Projects')
 @Controller('projects')
@@ -28,8 +32,13 @@ export class ProjectsController {
   @Post()
   @ApiOperation({ summary: 'Crear un nuevo proyecto' })
   @ApiResponse({ status: 201, description: 'Proyecto creado exitosamente' })
-  create(@Body() createProjectDto: CreateProjectDto) {
-    return this.projectsService.createProject(createProjectDto);
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('file'))
+  create(
+    @Body() createProjectDto: CreateProjectDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.projectsService.createProject(createProjectDto, file);
   }
 
   @Get()
@@ -54,7 +63,7 @@ export class ProjectsController {
   @ApiResponse({ status: 200, description: 'Proyecto actualizado' })
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateProjectDto: UpdateProjectDto
+    @Body() updateProjectDto: UpdateProjectDto,
   ) {
     return this.projectsService.updateProject(id, updateProjectDto);
   }

@@ -2,12 +2,21 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { UploadFileService } from '../upload-file/upload-file.service';
 
 @Injectable()
 export class ProjectsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private readonly uploadService: UploadFileService) {}
  
-   async createProject(createProjectDto: CreateProjectDto) {
+   async createProject(createProjectDto: CreateProjectDto, file: Express.Multer.File) {
+
+
+    //Subo la imagen y agrego su url al DTO
+    if (file) {
+      const url = await this.uploadService.uploadIMG(file, 'users/projects');
+    createProjectDto.imgURL = url;
+    }
+
      return await this.prisma.project.create({ data: createProjectDto });
    }
  
@@ -38,8 +47,11 @@ export class ProjectsService {
    }
  
    async removeProject(id: number) {
-     await this.findOneProject(id);
+     const project = await this.findOneProject(id);
  
+    //Elimino la imagen del proyecto
+    this.uploadService.deleteImg(project.imgURL)
+
      return this.prisma.project.update({ where: { id }, data: { active: false } });
    }
 }

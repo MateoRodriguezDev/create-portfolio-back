@@ -8,12 +8,15 @@ import {
   Delete,
   ParseIntPipe,
   UseGuards,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth, ApiConsumes } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { AuthGuard } from 'src/auth/guard/auth.guard';
+import { AuthGuard } from 'src/modules/auth/guard/auth.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Users')
 // @ApiBearerAuth()
@@ -25,8 +28,10 @@ export class UsersController {
   @Post()
   @ApiOperation({ summary: 'Crear un nuevo usuario' })
   @ApiResponse({ status: 201, description: 'Usuario creado exitosamente' })
-  createUser(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.createUser(createUserDto);
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('file'))
+  createUser(@Body() createUserDto: CreateUserDto, @UploadedFile() file: Express.Multer.File) {
+    return this.usersService.createUser(createUserDto, file);
   }
 
   @Get()

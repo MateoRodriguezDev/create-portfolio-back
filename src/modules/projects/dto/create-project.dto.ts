@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import { IsString, IsOptional, IsInt, IsBoolean } from 'class-validator';
 
 export class CreateProjectDto {
@@ -14,6 +15,7 @@ export class CreateProjectDto {
     description: 'Imagen del proyecto',
   })
   @IsString()
+  @IsOptional()
   imgURL: string;
 
   @ApiProperty({
@@ -29,12 +31,20 @@ export class CreateProjectDto {
     example: 1,
     description: 'ID del usuario propietario',
   })
+  @Transform(({ value }) => {
+    const parsed = parseInt(value, 10);
+    return isNaN(parsed) ? value : parsed; 
+  })
   @IsInt()
   userId: number;
 
   @ApiProperty({
     example: 2,
     description: 'ID de la tecnología utilizada',
+  })
+  @Transform(({ value }) => {
+    const parsed = parseInt(value, 10);
+    return isNaN(parsed) ? value : parsed; 
   })
   @IsInt()
   technologyId: number;

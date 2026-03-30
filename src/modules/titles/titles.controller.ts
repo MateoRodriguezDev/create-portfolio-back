@@ -21,7 +21,7 @@ import {
 import { TitlesService } from './titles.service';
 import { CreateTitleDto } from './dto/create-title.dto';
 import { UpdateTitleDto } from './dto/update-title.dto';
-import { AuthGuard } from 'src/auth/guard/auth.guard';
+import { AuthGuard } from 'src/modules/auth/guard/auth.guard';
 
 @ApiTags('Titles')
 // @ApiBearerAuth()
