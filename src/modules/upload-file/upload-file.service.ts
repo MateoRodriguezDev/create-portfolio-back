@@ -6,7 +6,6 @@ import { v4 as uuidv4 } from 'uuid';
 export class UploadFileService {
   constructor(private readonly admin: FirebaseAdmin) {}
 
-
   private readonly MAX_SIZE = 2 * 1024 * 1024; // 2MB
   private readonly ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
@@ -21,24 +20,22 @@ export class UploadFileService {
     }
 
     // Validar tipo
-  if (!this.ALLOWED_TYPES.includes(file.mimetype)) {
-    throw new BadRequestException(
-      `File type not allowed. Allowed types: ${this.ALLOWED_TYPES.join(', ')}`
-    );
-  }
+    if (!this.ALLOWED_TYPES.includes(file.mimetype)) {
+      throw new BadRequestException(
+        `File type not allowed. Allowed types: ${this.ALLOWED_TYPES.join(', ')}`,
+      );
+    }
 
-  // Validar tamaño
-  if (file.size > this.MAX_SIZE) {
-    throw new BadRequestException(
-      `File too large. Max size: ${this.MAX_SIZE / (1024 * 1024)}MB`
-    );
-  }
-
+    // Validar tamaño
+    if (file.size > this.MAX_SIZE) {
+      throw new BadRequestException(
+        `File too large. Max size: ${this.MAX_SIZE / (1024 * 1024)}MB`,
+      );
+    }
 
     // Cambio el nombre
-  const extension = file.originalname.split('.').pop();
-  file.originalname = `${uuidv4()}.${extension}`;
-
+    const extension = file.originalname.split('.').pop();
+    file.originalname = `${uuidv4()}.${extension}`;
 
     const app = this.admin.getApp();
     const bucket = app.storage().bucket();
@@ -61,6 +58,11 @@ export class UploadFileService {
    * @description Eliminar imágenes
    */
   async deleteImg(imageURL: string) {
+    if (!imageURL) {
+      console.log('No image URL provided, skipping delete');
+      return;
+    }
+
     const app = this.admin.getApp();
     const bucket = app.storage().bucket();
     const fileUpload = bucket.file(imageURL);
@@ -69,7 +71,7 @@ export class UploadFileService {
       .exists()
       .then((data) => {
         if (data[0]) {
-          console.log('Image deleted')
+          console.log('Image deleted');
           return fileUpload.delete();
         } else {
           console.log(`The image doesn't exist`);

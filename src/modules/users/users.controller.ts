@@ -30,8 +30,8 @@ export class UsersController {
   @ApiResponse({ status: 201, description: 'Usuario creado exitosamente' })
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('file'))
-  createUser(@Body() createUserDto: CreateUserDto, @UploadedFile() file: Express.Multer.File) {
-    return this.usersService.createUser(createUserDto, file);
+  createUser(@Body() createUserDto: CreateUserDto) {
+    return this.usersService.createUser(createUserDto);
   }
 
   @Get()
@@ -69,4 +69,8 @@ export class UsersController {
   removeUser(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.removeUser(id);
   }
+
+
+  
+
 }

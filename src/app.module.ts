@@ -9,6 +9,7 @@ import { TechnologiesModule } from './modules/technologies/technologies.module';
 import { ProjectsModule } from './modules/projects/projects.module';
 import { ConfigModule } from '@nestjs/config';
 import { UploadFileModule } from './modules/upload-file/upload-file.module';
+import { UserProfileModule } from './modules/user-profile/user-profile.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { UploadFileModule } from './modules/upload-file/upload-file.module';
     TechnologiesModule,
     ProjectsModule,
     UploadFileModule,
+    UserProfileModule,
   ],
   providers: [],
 })

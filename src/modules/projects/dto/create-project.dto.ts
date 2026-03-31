@@ -1,6 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsString, IsOptional, IsInt, IsBoolean } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsInt,
+  IsBoolean,
+  IsArray,
+} from 'class-validator';
 
 export class CreateProjectDto {
   @ApiProperty({
@@ -33,28 +39,38 @@ export class CreateProjectDto {
   })
   @Transform(({ value }) => {
     const parsed = parseInt(value, 10);
-    return isNaN(parsed) ? value : parsed; 
+    return isNaN(parsed) ? value : parsed;
   })
   @IsInt()
-  userId: number;
+  userProfileId: number;
 
   @ApiProperty({
-    example: 2,
-    description: 'ID de la tecnología utilizada',
+    example: true,
+    description: 'Indica si la categoría está activa',
+    required: false,
   })
+  @IsOptional()
+  @IsBoolean()
+  active?: boolean;
+
+  @ApiProperty({
+    example: [1, 2, 3],
+    description: 'IDs de las tecnologías utilizadas',
+  })
+  @IsArray()
+  @IsInt({ each: true })
   @Transform(({ value }) => {
-    const parsed = parseInt(value, 10);
-    return isNaN(parsed) ? value : parsed; 
+    // Si llega como string JSON: '["1", "2", "3"]'
+    if (typeof value === 'string') {
+      try {
+        const parsed = JSON.parse(value);
+        return Array.isArray(parsed) ? parsed.map(Number) : [Number(parsed)];
+      } catch {
+        return [Number(value)];
+      }
+    }
+    // Si llega como array normal: ["1", "2", "3"]
+    return Array.isArray(value) ? value.map(Number) : [Number(value)];
   })
-  @IsInt()
-  technologyId: number;
-
-  @ApiProperty({
-      example: true,
-      description: 'Indica si la categoría está activa',
-      required: false,
-    })
-    @IsOptional()
-    @IsBoolean()
-    active?: boolean;
+  technologyIds: number[];
 }

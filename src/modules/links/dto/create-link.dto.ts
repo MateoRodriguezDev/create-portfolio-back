@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { Transform } from "class-transformer";
 import { IsString, IsUrl, IsOptional, IsInt } from "class-validator";
 
 export class CreateLinkDto {
@@ -26,8 +27,12 @@ export class CreateLinkDto {
     example: 1,
     description: 'ID del usuario propietario del link'
   })
+  @Transform(({ value }) => {
+      const parsed = parseInt(value, 10);
+      return isNaN(parsed) ? value : parsed;
+    })
   @IsInt()
-  userId: number;
+  userProfileId: number;
 
 
 }

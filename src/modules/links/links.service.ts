@@ -45,9 +45,9 @@ export class LinksService {
     return this.prisma.link.delete({ where: { id } });
   }
 
-  findLinksByUser(userId: number) {
+  findLinksByUserProfile(userProfileId: number) {
     return this.prisma.link.findMany({
-      where: { userId },
+      where: { userProfileId },
     });
   }
 }

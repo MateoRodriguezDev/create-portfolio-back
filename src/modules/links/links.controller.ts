@@ -67,7 +67,7 @@ export class LinksController {
   @ApiOperation({ summary: 'Obtener links por usuario' })
   @ApiParam({ name: 'userId', type: Number })
   @ApiResponse({ status: 200, description: 'Links del usuario' })
-  findLinksByUser(@Param('userId', ParseIntPipe) userId: number) {
-    return this.linksService.findLinksByUser(userId);
+  findLinksByUserProfile(@Param('userId', ParseIntPipe) userProfileId: number) {
+    return this.linksService.findLinksByUserProfile(userProfileId);
   }
 }

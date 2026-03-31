@@ -11,18 +11,13 @@ import { UploadFileService } from 'src/modules/upload-file/upload-file.service';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService, private readonly uploadService: UploadFileService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly uploadService: UploadFileService,
+  ) {}
 
-  
-
-  async createUser(createUserDto: CreateUserDto, file: Express.Multer.File) {
+  async createUser(createUserDto: CreateUserDto) {
     createUserDto.password = await hashPassword(createUserDto.password);
-
-    //Subo la imagen y agrego su url al DTO
-    if (file) {
-      const url = await this.uploadService.uploadIMG(file, 'users/profiles');
-    createUserDto.profilePictureURL = url;
-    }
 
     return this.prisma.user.create({ data: createUserDto });
   }
@@ -30,15 +25,6 @@ export class UsersService {
   async findAllUsers() {
     const users = await this.prisma.user.findMany({
       where: { active: true },
-      include: {
-        title: {
-          select: {
-            id: true,
-            titleName: true,
-            titleIconURL: true,
-          },
-        },
-      },
     });
 
     if (!users) throw new NotFoundException('No Users in the database');
@@ -48,15 +34,6 @@ export class UsersService {
   async findOneUser(id: number) {
     const user = await this.prisma.user.findUnique({
       where: { id, active: true },
-      include: {
-        title: {
-          select: {
-            id: true,
-            titleName: true,
-            titleIconURL: true,
-          },
-        },
-      },
     });
 
     if (!user) throw new NotFoundException('User Not Found');
@@ -79,18 +56,6 @@ export class UsersService {
   async removeUser(id: number) {
     const user = await this.findOneUser(id);
 
-    //Elimino la imagen del perfil del usuario
-    this.uploadService.deleteImg(user.profilePictureURL)
-
     return this.prisma.user.update({ where: { id }, data: { active: false } });
   }
-
-
-
-  
-
-
 }
-
-
-
