@@ -21,7 +21,7 @@ export class ProjectTechnologyResponseDto {
 }
 
 export class ProjectResponseDto {
-//   @Expose() id: number;
+  @Expose() id: number;
   @Expose() projectName: string;
   @Expose() imgURL: string;
   @Expose() descripcion: string;

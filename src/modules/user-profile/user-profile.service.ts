@@ -103,6 +103,7 @@ export class UserProfileService {
       title: true,
       links: true,
       projects: {
+        where: {active: true},
         include: {
           technologies: {
             include: {
@@ -115,7 +116,7 @@ export class UserProfileService {
   });
 
   return plainToInstance(UserProfileResponseDto, profile, {
-    excludeExtraneousValues: true, // 👈 solo expone los campos con @Expose()
+    excludeExtraneousValues: true, 
   });
 }
 

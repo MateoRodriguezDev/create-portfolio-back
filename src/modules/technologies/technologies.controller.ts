@@ -32,6 +32,14 @@ export class TechnologiesController {
     return this.technologiesService.createTechnology(createTechnologyDto);
   }
 
+  @Get('technologyByCat/:id')
+  @ApiOperation({ summary: 'Obtener todas las tecnologías por categoría' })
+  @ApiResponse({ status: 200, description: 'Lista de tecnologías' })
+  @ApiResponse({ status: 404, description: 'Categoría no encontrada' })
+  findAllTechnologiesByCategory(@Param('id', ParseIntPipe) id: number) {
+    return this.technologiesService.findAllTechnologiesByCategory(id);
+  }
+
   @Get()
   @ApiOperation({ summary: 'Obtener todas las tecnologías' })
   @ApiResponse({ status: 200, description: 'Lista de tecnologías' })
