@@ -32,13 +32,13 @@ export class ProjectResponseDto {
 }
 
 export class LinkResponseDto {
-//   @Expose() id: number;
+  @Expose() id: number;
   @Expose() url: string;
   @Expose() descripcion: string;
 }
 
 export class TitleResponseDto {
-//   @Expose() id: number;
+  @Expose() id: number;
   @Expose() titleName: string;
   @Expose() descripcion: string;
   @Expose() titleIconURL: string;
@@ -46,7 +46,7 @@ export class TitleResponseDto {
 
 export class UserProfileResponseDto {
 //   @Expose() id: number;
-//   @Expose() fullName: string;
+  @Expose() fullName: string;
   @Expose() userName: string;
   @Expose() profilePictureURL: string;
 
