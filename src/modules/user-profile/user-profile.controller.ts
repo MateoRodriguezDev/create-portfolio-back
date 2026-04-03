@@ -16,7 +16,6 @@ import {
   ApiOperation,
   ApiResponse,
   ApiParam,
-  ApiBearerAuth,
   ApiConsumes,
 } from '@nestjs/swagger';
 import { UserProfileService } from './user-profile.service';

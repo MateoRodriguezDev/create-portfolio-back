@@ -7,7 +7,7 @@ import { Exclude, Expose, Type } from 'class-transformer';
 // }
 
 export class TechnologyResponseDto {
-//   @Expose() id: number;
+  @Expose() id: number;
   @Expose() techName: string;
   @Expose() imgURL: string;
   @Expose() descripcion: string;

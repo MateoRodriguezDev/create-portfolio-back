@@ -61,10 +61,16 @@ export class ProjectsController {
   @ApiOperation({ summary: 'Actualizar un proyecto por ID' })
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 200, description: 'Proyecto actualizado' })
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('file'))
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateProjectDto: UpdateProjectDto,
+    @UploadedFile() file?: Express.Multer.File,
   ) {
+    if(file) {
+      return this.projectsService.updateProject(id, updateProjectDto, file);
+    }
     return this.projectsService.updateProject(id, updateProjectDto);
   }
 

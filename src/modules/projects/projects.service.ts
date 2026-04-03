@@ -5,8 +5,8 @@ import {
 } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { UploadFileService } from '../upload-file/upload-file.service';
+import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class ProjectsService {
@@ -34,7 +34,11 @@ export class ProjectsService {
           create: technologyIds.map((technologyId) => ({ technologyId })),
         },
       },
-      include: { technologies: true },
+      include: {
+        technologies: {
+          include: { technology: true }, // 👈
+        },
+      },
     });
   }
 
@@ -57,25 +61,44 @@ export class ProjectsService {
     return project;
   }
 
-  async updateProject(id: number, updateProjectDto: UpdateProjectDto) {
+  async updateProject(
+    id: number,
+    updateProjectDto: UpdateProjectDto,
+    file?: Express.Multer.File,
+  ) {
     const { technologyIds, ...projectData } = updateProjectDto;
 
-    await this.findOneProject(id);
+    const project = await this.findOneProject(id);
+
+    //Actualizo la imagen del proyecto si se trajo una
+    if (file) {
+      //Borro la anterior
+      this.uploadService.deleteImg(project.imgURL);
+
+      const url = await this.uploadService.uploadIMG(file, 'users/projects');
+
+      projectData.imgURL = url;
+    }
 
     if (!updateProjectDto) throw new BadRequestException('Empty Body');
 
+    console.log(updateProjectDto.imgURL);
     return this.prisma.project.update({
       where: { id },
       data: {
         ...projectData,
         technologies: technologyIds
           ? {
-              deleteMany: {}, 
-              create: technologyIds.map((technologyId) => ({ technologyId })), 
+              deleteMany: {},
+              create: technologyIds.map((technologyId) => ({ technologyId })),
             }
           : undefined,
       },
-      include: { technologies: true },
+      include: {
+        technologies: {
+          include: { technology: true }, // 👈
+        },
+      },
     });
   }
 
