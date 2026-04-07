@@ -71,19 +71,8 @@ async function main() {
   });
   console.log('✅ Categoría DevOps creada');
 
-  // ── Usuario admin ─────────────────────────────────────────
-  const hashedPassword = await bcrypt.hash('admin123', 10);
 
-  await prisma.user.upsert({
-    where: { email: 'admin@admin.com' },
-    update: {},
-    create: {
-      email: 'admin@admin.com',
-      password: hashedPassword,
-      role: 'admin',
-    },
-  });
-  console.log('✅ Usuario admin creado');
+  
 
   console.log('🌱 Seed completado');
 }

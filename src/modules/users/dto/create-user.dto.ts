@@ -4,14 +4,11 @@ import { Role } from '@prisma/client';
 import { Transform } from 'class-transformer';
 
 export class CreateUserDto {
-  @ApiProperty({ example: 'juan.perez@mail.com', description: 'Correo electrónico válido' })
-  @IsEmail()
-  email: string;
+  
 
-  @ApiProperty({ example: '123456', description: 'Contraseña (mínimo 6 caracteres)' })
+  @ApiProperty({ example: '', description: 'UID del usuario en firebase', required: true, default: 'user' })
   @IsString()
-  @MinLength(6)
-  password: string;
+  uid: string;
 
   @ApiProperty({ example: 'user', description: 'Rol del usuario', required: false, default: 'user' })
   @IsOptional()

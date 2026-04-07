@@ -95,10 +95,10 @@ export class UserProfileService {
 
 
 
-  //Función para traer el perfil entero
-  async getFullUserProfile(userProfileId: number) {
-  const profile = await this.prisma.userProfile.findUnique({
-    where: { id: userProfileId },
+  //Función para traer el perfil entero con el id del usuario
+  async getFullUserProfile(userId: number) {
+  const profile = await this.prisma.userProfile.findFirst({
+    where: { userId },
     include: {
       title: true,
       links: true,

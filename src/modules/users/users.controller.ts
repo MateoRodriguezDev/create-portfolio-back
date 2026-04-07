@@ -46,8 +46,17 @@ export class UsersController {
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 200, description: 'Usuario encontrado' })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
-  findOneUser(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.findOneUser(id);
+  findOneUserById(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.findOneUserById(id);
+  }
+
+    @Get(':id')
+  @ApiOperation({ summary: 'Obtener un usuario por ID' })
+  @ApiParam({ name: 'id', type: String })
+  @ApiResponse({ status: 200, description: 'Usuario encontrado' })
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
+  findOneUserByUid(@Param('id') id: string) {
+    return this.usersService.findOneUserByUid(id);
   }
 
   @Patch(':id')

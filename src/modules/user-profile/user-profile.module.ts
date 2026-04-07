@@ -8,5 +8,6 @@ import { UploadFileModule } from 'src/modules/upload-file/upload-file.module';
   imports: [PrismaModule, UploadFileModule],
   controllers: [UserProfileController],
   providers: [UserProfileService],
+  exports: [UserProfileService]
 })
 export class UserProfileModule {}

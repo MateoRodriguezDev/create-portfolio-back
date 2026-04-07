@@ -18,11 +18,12 @@ export class CreateUserProfileDto {
   @ApiProperty({
     example: 'Juan Perez',
     description: 'Nombre completo del usuario',
+    required: false,
   })
   @IsString()
   fullName: string;
 
-  @ApiProperty({ example: 'juanPerez2006', description: 'Nombre de usuario' })
+  @ApiProperty({ example: 'juanPerez2006', description: 'Nombre de usuario', required: false, })
   @IsString()
   userName: string;
 
@@ -33,7 +34,6 @@ export class CreateUserProfileDto {
   })
   @IsOptional()
   @IsString()
-  @IsOptional()
   profilePictureURL: string;
 
   @ApiProperty({
@@ -47,7 +47,8 @@ export class CreateUserProfileDto {
     return isNaN(parsed) ? value : parsed;
   })
   @IsInt()
-  titleId: number;
+  @IsOptional()
+  titleId?: number;
 
   @ApiProperty({
     example: true,

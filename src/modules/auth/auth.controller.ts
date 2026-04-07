@@ -11,8 +11,8 @@ export class AuthController {
     @ApiOperation({ summary: 'Inicia Sesión' })
     @ApiResponse({ status: 201, description: 'Login Correcto' })
     @ApiResponse({ status: 400, description: 'Invalid Credentials' })
-    create(@Body() loginAuthDto: LoginAuthDto) {
-      return this.authService.login(loginAuthDto);
+    create(@Body() UIDToken: string) {
+      return this.authService.login(UIDToken);
     }
 
 }
