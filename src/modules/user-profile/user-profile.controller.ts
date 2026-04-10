@@ -48,7 +48,7 @@ export class UserProfileController {
   })
   @ApiForbiddenResponse({ description: 'Forbidden.' })
   @UseGuards(AuthGuard, AuthRolGuard)
-  @Roles('admin', 'client')
+  @Roles('admin', 'user')
   createUserProfile(
     @Body() createUserProfileDto: CreateUserProfileDto,
     @UploadedFile() file: Express.Multer.File,
@@ -102,7 +102,7 @@ export class UserProfileController {
   })
   @ApiForbiddenResponse({ description: 'Forbidden.' })
   @UseGuards(AuthGuard, AuthRolGuard)
-  @Roles('admin', 'client')
+  @Roles('admin', 'user')
   updateUserProfile(
     @Param('id', ParseIntPipe) id: string,
     @Body() updateUserProfileDto: UpdateUserProfileDto,
@@ -131,7 +131,7 @@ export class UserProfileController {
   })
   @ApiForbiddenResponse({ description: 'Forbidden.' })
   @UseGuards(AuthGuard, AuthRolGuard)
-  @Roles('admin', 'client')
+  @Roles('admin', 'user')
   removeUserProfile(@Param('id', ParseIntPipe) id: string, @GetUser() user: User,) {
     return this.userProfileService.removeUserProfile(+id, user);
   }

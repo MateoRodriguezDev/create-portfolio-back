@@ -40,7 +40,8 @@ export class UserProfileService {
       where: { active: true },
     });
 
-    if (!userProfiles.length) throw new NotFoundException('No Profiles in the database');
+    if (!userProfiles.length)
+      throw new NotFoundException('No Profiles in the database');
 
     return userProfiles;
   }
@@ -64,6 +65,14 @@ export class UserProfileService {
     const profile = await this.findOneUserProfile(id);
 
     await this.isThisMyProfile(user, profile);
+
+    //Verifico si mando un titulo valido
+    if (updateUserProfileDto.titleId) {
+      const title = await this.prisma.title.findUnique({
+        where: { id: updateUserProfileDto.titleId },
+      });
+      if (!title) updateUserProfileDto.titleId = null;
+    }
 
     //Actualizo la imagen de perfil si se trajo una
     if (file) {

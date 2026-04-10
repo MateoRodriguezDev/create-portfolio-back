@@ -48,7 +48,7 @@ export class CreateUserProfileDto {
   })
   @IsInt()
   @IsOptional()
-  titleId?: number;
+  titleId?: number | null;
 
   @ApiProperty({
     example: true,
