@@ -3,9 +3,10 @@ import { UserProfileService } from './user-profile.service';
 import { UserProfileController } from './user-profile.controller';
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { UploadFileModule } from 'src/modules/upload-file/upload-file.module';
+import { UsersModule } from '../users/users.module';
 
 @Module({
-  imports: [PrismaModule, UploadFileModule],
+  imports: [PrismaModule, UploadFileModule, UsersModule],
   controllers: [UserProfileController],
   providers: [UserProfileService],
   exports: [UserProfileService]

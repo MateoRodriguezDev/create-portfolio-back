@@ -86,6 +86,7 @@ export class UploadFileService {
   async verifyUID(UIDtoken: string): Promise<DecodedIdToken | null>{
     const app = this.admin.getApp();
 
+    console.log(UIDtoken)
     const token = await app.auth().verifyIdToken(UIDtoken)
 
     if(token) {

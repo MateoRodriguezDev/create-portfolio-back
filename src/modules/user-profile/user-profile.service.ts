@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -9,6 +10,8 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { UploadFileService } from 'src/modules/upload-file/upload-file.service';
 import { UserProfileResponseDto } from './dto/response/user-profile.response.dto';
 import { plainToInstance } from 'class-transformer';
+import { Role, User } from '@prisma/client';
+import { Profile } from 'src/types';
 
 @Injectable()
 export class UserProfileService {
@@ -37,8 +40,8 @@ export class UserProfileService {
       where: { active: true },
     });
 
-    if (!userProfiles)
-      throw new NotFoundException('No Profiles in the database');
+    if (!userProfiles.length) throw new NotFoundException('No Profiles in the database');
+
     return userProfiles;
   }
 
@@ -55,10 +58,12 @@ export class UserProfileService {
   async updateUserProfile(
     id: number,
     updateUserProfileDto: UpdateUserProfileDto,
+    user: User,
     file?: Express.Multer.File,
   ) {
     const profile = await this.findOneUserProfile(id);
 
+    await this.isThisMyProfile(user, profile);
 
     //Actualizo la imagen de perfil si se trajo una
     if (file) {
@@ -76,8 +81,10 @@ export class UserProfileService {
     });
   }
 
-  async removeUserProfile(id: number) {
+  async removeUserProfile(id: number, user: User) {
     const profile = await this.findOneUserProfile(id);
+
+    await this.isThisMyProfile(user, profile);
 
     //Elimino la imagen del perfil del usuario
     this.uploadService.deleteImg(profile.profilePictureURL);
@@ -88,39 +95,39 @@ export class UserProfileService {
     });
   }
 
-
-
-
-
-
-
-
   //Función para traer el perfil entero con el id del usuario
   async getFullUserProfile(userId: number) {
-  const profile = await this.prisma.userProfile.findFirst({
-    where: { userId },
-    include: {
-      title: true,
-      links: true,
-      projects: {
-        where: {active: true},
-        include: {
-          technologies: {
-            include: {
-              technology: true
-            }
-          }
-        }
-      }
-    }
-  });
+    const profile = await this.prisma.userProfile.findFirst({
+      where: { userId },
+      include: {
+        title: true,
+        links: true,
+        projects: {
+          where: { active: true },
+          include: {
+            technologies: {
+              include: {
+                technology: true,
+              },
+            },
+          },
+        },
+      },
+    });
 
-  return plainToInstance(UserProfileResponseDto, profile, {
-    excludeExtraneousValues: true, 
-  });
-}
+    if (!profile) throw new NotFoundException('Profile Not Found');
 
+    return plainToInstance(UserProfileResponseDto, profile, {
+      excludeExtraneousValues: true,
+    });
+  }
 
+  async isThisMyProfile(user: User, profile: Profile) {
+    //Primero reviso si el usuario es admin
+    if (user.role === Role.admin) return true;
 
-
+    //Si no es admin, reviso si el perfil le pertenece al usuario
+    if (user.id !== profile.userId)
+      throw new ForbiddenException('Not your profile');
+  }
 }

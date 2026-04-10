@@ -1,40 +1,46 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import {Request} from 'express'
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { Request } from 'express';
+import { UploadFileService } from 'src/modules/upload-file/upload-file.service';
+import { UsersService } from 'src/modules/users/users.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-
   constructor(
-    private readonly jwtService: JwtService
-  ){}
+    private uploadFileService: UploadFileService,
+    private usersService: UsersService,
+  ) {}
 
   /**
    * @description
    * verifica si puede pasar o no el guard
-   * @param {ExecutionContext} context 
+   * @param {ExecutionContext} context
    * @returns {Promise<boolean>}
    */
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    
-    const request = context.switchToHttp().getRequest()
-    const token = this.extractTokenFromHeader(request)
-    
+    const request = context.switchToHttp().getRequest();
+    const token = this.extractTokenFromHeader(request);
 
-    if(!token){
-      throw new UnauthorizedException()
+    if (!token) {
+      throw new UnauthorizedException();
     }
 
     try {
-      //Verifica el token con la palabra secreta
-      const payload = await this.jwtService.verifyAsync(token, {
-        secret: process.env.TOKEN,
-      });
+      // Verifico el token
+      const firebaseUser = await this.uploadFileService.verifyUID(token);
 
-      //Guarda una copia del usuario extraido del token en el request
-      request.user = payload;
+      // Busco el usuario en mi DB
+      if(firebaseUser === null) throw new Error('Token Error')
+      const userDB = await this.usersService.findOneUserByUid(firebaseUser.uid);
+
+      // Guardo el usuario completo en el request
+      request.user = userDB;
     } catch (error) {
-      console.log(error)
+      console.log(error);
       throw new UnauthorizedException();
     }
 
@@ -42,13 +48,13 @@ export class AuthGuard implements CanActivate {
   }
 
   /**
-   * @description 
+   * @description
    * Funcion para retirar el token del header
-   * @param {Request} request 
+   * @param {Request} request
    * @returns {string | undefined}
    */
-  private extractTokenFromHeader(request: Request) {
-    const [type, token] = request.headers.authorization?.split(" ") ?? [];
-    return type === "Bearer" ? token : undefined;
+  private extractTokenFromHeader(request: Request): string | undefined {
+    const [type, token] = request.headers.authorization?.split(' ') ?? [];
+    return type === 'Bearer' ? token : undefined;
   }
 }

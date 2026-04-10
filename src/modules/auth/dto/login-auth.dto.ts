@@ -4,14 +4,10 @@ import { IsEmail, IsString, MinLength } from "class-validator";
 
 export class LoginAuthDto {
 
-    @ApiProperty({ example: 'juan.perez@mail.com', description: 'Correo del usuario' })
-    @IsEmail()
-    email: string;
-
-
-    @ApiProperty({ example: '123456', description: 'Password del usuario' })
+    @ApiProperty({ example: 'eyJhbGciOiJSUzI1NiIsImtpZCI6IjVlODJhZmI0ZWY2OWI3NjM4MzA2OWFjNmI1N2U3ZTY1MjAzYmZlOTYiLCJ0eXAiOiJKV1QifQ.eyJuYW1lIjoiTWF0ZW8gUm9kcmlndWV6IiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hL0FDZzhvY0pVdVllS1k4N2tQcWZTcXVORFc2SzlvMDJ1WW15VDZoQ2xaSHRETHNNUkRvMDRPdz1zOTYtYyIsImlzcyI6Imh0dHBzOi8vc2VjdXJldG9rZW4uZ29vZ2xlLmNvbS9jcmVhdGVwb3J0Zm9saW8tMzEwMTgiLCJhdWQiOiJjcmVhdGVwb3J0Zm9saW8tMzEwMTgiLCJhdXRoX3RpbWUiOjE3NzU2OTk3NzAsInVzZXJfaWQiOiJhNWtpNHR2bE1HVzR1UVloNWtSUjJUY0Y1eXgyIiwic3ViIjoiYTVraTR0dmxNR1c0dVFZaDVrUlIyVGNGNXl4MiIsImlhdCI6MTc3NTY5OTc3MCwiZXhwIjoxNzc1NzAzMzcwLCJlbWFpbCI6Im1hdGVvcjg2MUBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJnb29nbGUuY29tIjpbIjEwODg3MjgzMjYxMzQyMzY0NTk1MyJdLCJlbWFpbCI6WyJtYXRlb3I4NjFAZ21haWwuY29tIl19LCJzaWduX2luX3Byb3ZpZGVyIjoiZ29vZ2xlLmNvbSJ9fQ.hjX8qcPACafu-jQ0nmumC7MeUDQ8MNsM44R7dDyDAMvn3mjPCdkFL3ZbqBaofT8dqdFyZ1k00ZVygSQ54S4ZNuUot60gZwwnF5e200mo_Y9EABFgv93tBiUY0sB8xbV8iXeXMYjX3Pf0B3wM5l1ZIeK4aMVbwMQDeF3Bjkng9h4k4PlQP2uVW1Lde5A81ePUNMiydH6QsPxy8yEhq1qHkXTmAQRfPKfrvyIUXc2_5EE_2NFirD34DSmZRIYXxNjbiOwwgDkNLBV9nmBrZgIDeEM_6gTaqaSxK_DjpLX4CSLQqOTsXEwUW1JYBrvxNUfx8u2QqzyJy_a1V28_taLjLw', description: 'Token del usuario' })
     @IsString()
-    @MinLength(6)
-    @Transform(({ value }) => value.trim())
-    password: string;
+    UIDtoken: string;
+
+
+
 }

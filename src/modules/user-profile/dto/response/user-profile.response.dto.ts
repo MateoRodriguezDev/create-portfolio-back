@@ -45,7 +45,7 @@ export class TitleResponseDto {
 }
 
 export class UserProfileResponseDto {
-//   @Expose() id: number;
+  @Expose() id: number;
   @Expose() fullName: string;
   @Expose() userName: string;
   @Expose() profilePictureURL: string;
