@@ -7,7 +7,7 @@ import { Exclude, Expose, Type } from 'class-transformer';
 // }
 
 export class TechnologyResponseDto {
-//   @Expose() id: number;
+  @Expose() id: number;
   @Expose() techName: string;
   @Expose() imgURL: string;
   @Expose() descripcion: string;
@@ -32,21 +32,21 @@ export class ProjectResponseDto {
 }
 
 export class LinkResponseDto {
-//   @Expose() id: number;
+  @Expose() id: number;
   @Expose() url: string;
   @Expose() descripcion: string;
 }
 
 export class TitleResponseDto {
-//   @Expose() id: number;
+  @Expose() id: number;
   @Expose() titleName: string;
   @Expose() descripcion: string;
   @Expose() titleIconURL: string;
 }
 
 export class UserProfileResponseDto {
-//   @Expose() id: number;
-//   @Expose() fullName: string;
+  @Expose() id: number;
+  @Expose() fullName: string;
   @Expose() userName: string;
   @Expose() profilePictureURL: string;
 

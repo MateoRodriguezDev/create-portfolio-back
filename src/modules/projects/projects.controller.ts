@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   UploadedFile,
   UseInterceptors,
+  UseGuards,
 } from '@nestjs/common';
 
 import {
@@ -17,12 +18,20 @@ import {
   ApiResponse,
   ApiParam,
   ApiConsumes,
+  ApiBearerAuth,
+  ApiForbiddenResponse,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { AuthGuard } from '../auth/guard/auth.guard';
+import { AuthRolGuard } from '../auth/guard/auth_rol.guard';
+import type { User } from '@prisma/client';
+import { GetUser } from '../auth/decorators/getParam.decorator';
 
 @ApiTags('Projects')
 @Controller('projects')
@@ -33,12 +42,20 @@ export class ProjectsController {
   @ApiOperation({ summary: 'Crear un nuevo proyecto' })
   @ApiResponse({ status: 201, description: 'Proyecto creado exitosamente' })
   @ApiConsumes('multipart/form-data')
+  @ApiBearerAuth()
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized Bearer Auth',
+  })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
+  @UseGuards(AuthGuard, AuthRolGuard)
+  @Roles('admin', 'user')
   @UseInterceptors(FileInterceptor('file'))
   create(
     @Body() createProjectDto: CreateProjectDto,
     @UploadedFile() file: Express.Multer.File,
+    @GetUser() user: User,
   ) {
-    return this.projectsService.createProject(createProjectDto, file);
+    return this.projectsService.createProject(createProjectDto, file, user);
   }
 
   @Get()
@@ -61,11 +78,30 @@ export class ProjectsController {
   @ApiOperation({ summary: 'Actualizar un proyecto por ID' })
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 200, description: 'Proyecto actualizado' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBearerAuth()
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized Bearer Auth',
+  })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
+  @UseGuards(AuthGuard, AuthRolGuard)
+  @Roles('admin', 'user')
+  @UseInterceptors(FileInterceptor('file'))
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateProjectDto: UpdateProjectDto,
+    @GetUser() user: User,
+    @UploadedFile() file?: Express.Multer.File,
   ) {
-    return this.projectsService.updateProject(id, updateProjectDto);
+    if (file) {
+      return this.projectsService.updateProject(
+        id,
+        updateProjectDto,
+        user,
+        file,
+      );
+    }
+    return this.projectsService.updateProject(id, updateProjectDto, user);
   }
 
   @Delete(':id')
@@ -73,7 +109,14 @@ export class ProjectsController {
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 200, description: 'Proyecto eliminado' })
   @ApiResponse({ status: 404, description: 'Proyecto no encontrado' })
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.projectsService.removeProject(id);
+  @ApiBearerAuth()
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized Bearer Auth',
+  })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
+  @UseGuards(AuthGuard, AuthRolGuard)
+  @Roles('admin', 'user')
+  remove(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
+    return this.projectsService.removeProject(id, user);
   }
 }

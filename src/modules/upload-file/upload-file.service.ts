@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { DecodedIdToken } from 'firebase-admin/auth';
 import { FirebaseAdmin } from 'src/firebase-config/firebase.setup';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -81,4 +82,18 @@ export class UploadFileService {
         console.log(error);
       });
   }
+
+  async verifyUID(UIDtoken: string): Promise<DecodedIdToken | null>{
+    const app = this.admin.getApp();
+
+    const token = await app.auth().verifyIdToken(UIDtoken)
+
+    if(token) {
+      return token
+    }
+
+    return null
+
+  }
+
 }

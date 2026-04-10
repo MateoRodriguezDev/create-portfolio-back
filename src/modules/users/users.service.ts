@@ -17,10 +17,23 @@ export class UsersService {
   ) {}
 
   async createUser(createUserDto: CreateUserDto) {
-    createUserDto.password = await hashPassword(createUserDto.password);
-
     return this.prisma.user.create({ data: createUserDto });
   }
+
+  async createUserWithProfile(createUserDto: CreateUserDto) {
+  return this.prisma.user.create({
+    data: {
+      ...createUserDto,
+      profile: {
+        create: {
+          fullName: '',
+          userName: '',
+          profilePictureURL: '',
+        }
+      }
+    }
+  });
+}
 
   async findAllUsers() {
     const users = await this.prisma.user.findMany({
@@ -31,7 +44,7 @@ export class UsersService {
     return users;
   }
 
-  async findOneUser(id: number) {
+  async findOneUserById(id: number) {
     const user = await this.prisma.user.findUnique({
       where: { id, active: true },
     });
@@ -41,20 +54,27 @@ export class UsersService {
     return user;
   }
 
-  async updateUser(id: number, updateUserDto: UpdateUserDto) {
-    await this.findOneUser(id);
+  async findOneUserByUid(uid: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { uid, active: true },
+    });
 
-    //Hasheo la contraseña si es que se cambio
-    if (updateUserDto.password) {
-      updateUserDto.password = await hashPassword(updateUserDto.password);
-    }
+    if (!user) throw new NotFoundException('User Not Found');
+
+    return user;
+  }
+
+  async updateUser(id: number, updateUserDto: UpdateUserDto) {
+    await this.findOneUserById(id);
+
+   
 
     if (!updateUserDto) throw new BadRequestException('Empty Body');
     return this.prisma.user.update({ where: { id }, data: updateUserDto });
   }
 
   async removeUser(id: number) {
-    const user = await this.findOneUser(id);
+    const user = await this.findOneUserById(id);
 
     return this.prisma.user.update({ where: { id }, data: { active: false } });
   }

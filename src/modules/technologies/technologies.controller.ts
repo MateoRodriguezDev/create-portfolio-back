@@ -6,19 +6,26 @@ import {
   Patch,
   Param,
   Delete,
-  ParseIntPipe
+  ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 
 import {
   ApiTags,
   ApiOperation,
   ApiResponse,
-  ApiParam
+  ApiParam,
+  ApiBearerAuth,
+  ApiForbiddenResponse,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
 import { TechnologiesService } from './technologies.service';
 import { CreateTechnologyDto } from './dto/create-technology.dto';
 import { UpdateTechnologyDto } from './dto/update-technology.dto';
+import { AuthGuard } from '../auth/guard/auth.guard';
+import { AuthRolGuard } from '../auth/guard/auth_rol.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
 
 @ApiTags('Technologies')
 @Controller('technologies')
@@ -28,6 +35,13 @@ export class TechnologiesController {
   @Post()
   @ApiOperation({ summary: 'Crear una nueva tecnología' })
   @ApiResponse({ status: 201, description: 'Tecnología creada exitosamente' })
+  @ApiBearerAuth()
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized Bearer Auth',
+  })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
+  @UseGuards(AuthGuard, AuthRolGuard)
+  @Roles('admin')
   createTechnology(@Body() createTechnologyDto: CreateTechnologyDto) {
     return this.technologiesService.createTechnology(createTechnologyDto);
   }
@@ -60,9 +74,16 @@ export class TechnologiesController {
   @ApiOperation({ summary: 'Actualizar una tecnología por ID' })
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 200, description: 'Tecnología actualizada' })
+  @ApiBearerAuth()
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized Bearer Auth',
+  })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
+  @UseGuards(AuthGuard, AuthRolGuard)
+  @Roles('admin')
   updateTechnology(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateTechnologyDto: UpdateTechnologyDto
+    @Body() updateTechnologyDto: UpdateTechnologyDto,
   ) {
     return this.technologiesService.updateTechnology(id, updateTechnologyDto);
   }
@@ -72,6 +93,13 @@ export class TechnologiesController {
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 200, description: 'Tecnología eliminada' })
   @ApiResponse({ status: 404, description: 'Tecnología no encontrada' })
+  @ApiBearerAuth()
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized Bearer Auth',
+  })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
+  @UseGuards(AuthGuard, AuthRolGuard)
+  @Roles('admin')
   removeTechnology(@Param('id', ParseIntPipe) id: number) {
     return this.technologiesService.removeTechnology(id);
   }

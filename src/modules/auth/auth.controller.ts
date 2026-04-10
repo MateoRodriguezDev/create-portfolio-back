@@ -12,7 +12,7 @@ export class AuthController {
     @ApiResponse({ status: 201, description: 'Login Correcto' })
     @ApiResponse({ status: 400, description: 'Invalid Credentials' })
     create(@Body() loginAuthDto: LoginAuthDto) {
-      return this.authService.login(loginAuthDto);
+      return this.authService.login(loginAuthDto.UIDtoken);
     }
 
 }

@@ -19,8 +19,7 @@ enum Role {
 
 model User {
   id       Int     @id @default(autoincrement()) @db.UnsignedInt
-  email    String  @unique @db.VarChar(150)
-  password String  @db.VarChar(255)
+  uid      String  @unique
   role     Role    @default(user)
   
   active   Boolean @default(true)

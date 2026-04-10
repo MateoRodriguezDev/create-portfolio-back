@@ -8,16 +8,16 @@ async function main() {
 
   // ── Títulos ──────────────────────────────────────────────
   await prisma.title.createMany({
-    data: [
-      { titleName: 'Desarrollador Backend' },
-      { titleName: 'Desarrollador Frontend' },
-      { titleName: 'Desarrollador Full Stack' },
-      { titleName: 'DevOps Engineer' },
-      { titleName: 'Mobile Developer' },
-      { titleName: 'UI/UX Designer' },
-    ],
-    skipDuplicates: true,
-  });
+  data: [
+    { titleName: 'Desarrollador Backend', titleIconURL: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg' },
+    { titleName: 'Desarrollador Frontend', titleIconURL: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg' },
+    { titleName: 'Desarrollador Full Stack', titleIconURL: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg' },
+    { titleName: 'DevOps Engineer', titleIconURL: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg' },
+    { titleName: 'Mobile Developer', titleIconURL: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/android/android-original.svg' },
+    { titleName: 'UI/UX Designer', titleIconURL: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg' },
+  ],
+  skipDuplicates: true,
+});
   console.log('✅ Títulos creados');
 
   // ── Categorías con tecnologías ────────────────────────────
@@ -71,19 +71,8 @@ async function main() {
   });
   console.log('✅ Categoría DevOps creada');
 
-  // ── Usuario admin ─────────────────────────────────────────
-  const hashedPassword = await bcrypt.hash('admin123', 10);
 
-  await prisma.user.upsert({
-    where: { email: 'admin@admin.com' },
-    update: {},
-    create: {
-      email: 'admin@admin.com',
-      password: hashedPassword,
-      role: 'admin',
-    },
-  });
-  console.log('✅ Usuario admin creado');
+  
 
   console.log('🌱 Seed completado');
 }

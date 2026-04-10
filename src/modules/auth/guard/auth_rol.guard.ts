@@ -15,15 +15,18 @@ export class AuthRolGuard implements CanActivate {
             throw new ForbiddenException('Usuario no autenticado');
         }
 
+
         // Obtener los roles requeridos desde la metadata de la ruta
         const requiredRoles = this.reflector.get<string[]>('roles', context.getHandler());
+
         if (!requiredRoles || requiredRoles.length === 0) {
             return true; // Si no hay roles requeridos, permitir acceso
         }
 
         // Verificar si el usuario tiene uno de los roles requeridos
-        const userRoles = user.roles || []; // Asume que el usuario tiene una propiedad "roles"
+        const userRoles = user.role || []; // Asume que el usuario tiene una propiedad "roles"
         const hasRole = requiredRoles.some(role => userRoles.includes(role));
+
 
         if (!hasRole) {
             throw new ForbiddenException('No tienes el rol necesario para acceder a esta ruta');
