@@ -24,6 +24,7 @@ export class ProjectResponseDto {
   @Expose() id: number;
   @Expose() projectName: string;
   @Expose() imgURL: string;
+  @Expose() projectURL: string;
   @Expose() descripcion: string;
 
   @Expose()
@@ -49,6 +50,7 @@ export class UserProfileResponseDto {
   @Expose() fullName: string;
   @Expose() userName: string;
   @Expose() profilePictureURL: string;
+  @Expose() backgroundURL: string;
 
   @Expose()
   @Type(() => TitleResponseDto)

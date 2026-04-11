@@ -51,11 +51,13 @@ export class UserProfileController {
   @Roles('admin', 'user')
   createUserProfile(
     @Body() createUserProfileDto: CreateUserProfileDto,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file?: Express.Multer.File,
+    @UploadedFile() file2?: Express.Multer.File,
   ) {
     return this.userProfileService.createUserProfile(
       createUserProfileDto,
       file,
+      file2,
     );
   }
 

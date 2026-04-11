@@ -6,6 +6,7 @@ import {
   IsInt,
   IsBoolean,
   IsArray,
+  IsUrl,
 } from 'class-validator';
 
 export class CreateProjectDto {
@@ -52,6 +53,22 @@ export class CreateProjectDto {
   @IsOptional()
   @IsBoolean()
   active?: boolean;
+
+  @ApiProperty({
+    example: 'https://github.com/usuario',
+    description: 'Es el url del proyecto',
+    required: false,
+  })
+  @IsOptional()
+  @Transform(({ value }) => {
+    if (!value.startsWith('http://') && !value.startsWith('https://')) {
+      return `https://${value}`;
+    }
+    return value;
+  })
+  @IsString()
+  @IsUrl()
+  projectURL?: string;
 
   @ApiProperty({
     example: [1, 2, 3],

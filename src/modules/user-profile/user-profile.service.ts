@@ -22,14 +22,21 @@ export class UserProfileService {
 
   async createUserProfile(
     createUserProfileDto: CreateUserProfileDto,
-    file: Express.Multer.File,
+    file: Express.Multer.File | undefined,
+    file2: Express.Multer.File | undefined,
   ) {
     createUserProfileDto.profilePictureURL = '';
 
-    //Subo la imagen y agrego su url al DTO
+    //Subo la imagen del perfil y agrego su url al DTO
     if (file) {
       const url = await this.uploadService.uploadIMG(file, 'users/profiles');
       createUserProfileDto.profilePictureURL = url;
+    }
+
+    //Subo la imagen del fondo y agrego su url al DTO
+    if (file2) {
+      const url2 = await this.uploadService.uploadIMG(file2, 'users/backgrounds');
+      createUserProfileDto.backgroundURL = url2;
     }
 
     return this.prisma.userProfile.create({ data: createUserProfileDto });
