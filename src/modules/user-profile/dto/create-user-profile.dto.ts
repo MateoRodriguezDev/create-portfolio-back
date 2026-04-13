@@ -43,7 +43,7 @@ export class CreateUserProfileDto {
   })
   @IsOptional()
   @IsString()
-  backgroundURL: string;
+  backgroundURL: string | null;
 
   @ApiProperty({
     example: 1,

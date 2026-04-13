@@ -11,6 +11,7 @@ import {
   ParseIntPipe,
   SerializeOptions,
   UseGuards,
+  UploadedFiles,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -25,7 +26,10 @@ import {
 import { UserProfileService } from './user-profile.service';
 import { CreateUserProfileDto } from './dto/create-user-profile.dto';
 import { UpdateUserProfileDto } from './dto/update-user-profile.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
+import {
+  FileFieldsInterceptor,
+  FileInterceptor,
+} from '@nestjs/platform-express';
 import { AuthGuard } from '../auth/guard/auth.guard';
 import { AuthRolGuard } from '../auth/guard/auth_rol.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -92,12 +96,12 @@ export class UserProfileController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Actualizar un perfil de usuario por ID' })
-  @ApiParam({ name: 'id', type: Number })
-  @ApiResponse({ status: 200, description: 'Perfil actualizado exitosamente' })
-  @ApiResponse({ status: 404, description: 'Perfil no encontrado' })
-  @ApiConsumes('multipart/form-data')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'file', maxCount: 1 },
+      { name: 'file2', maxCount: 1 },
+    ]),
+  )
   @ApiBearerAuth()
   @ApiUnauthorizedResponse({
     description: 'Unauthorized Bearer Auth',
@@ -109,17 +113,16 @@ export class UserProfileController {
     @Param('id', ParseIntPipe) id: string,
     @Body() updateUserProfileDto: UpdateUserProfileDto,
     @GetUser() user: User,
-    @UploadedFile() file?: Express.Multer.File,
+    @UploadedFiles()
+    files: { file?: Express.Multer.File[]; file2?: Express.Multer.File[] },
   ) {
-    if (file) {
-      return this.userProfileService.updateUserProfile(
-        +id,
-        updateUserProfileDto,
-        user,
-        file,
-      );
-    }
-    return this.userProfileService.updateUserProfile(+id, updateUserProfileDto, user);
+    return this.userProfileService.updateUserProfile(
+      +id,
+      updateUserProfileDto,
+      user,
+      files.file?.[0],
+      files.file2?.[0],
+    );
   }
 
   @Delete(':id')
@@ -134,7 +137,10 @@ export class UserProfileController {
   @ApiForbiddenResponse({ description: 'Forbidden.' })
   @UseGuards(AuthGuard, AuthRolGuard)
   @Roles('admin', 'user')
-  removeUserProfile(@Param('id', ParseIntPipe) id: string, @GetUser() user: User,) {
+  removeUserProfile(
+    @Param('id', ParseIntPipe) id: string,
+    @GetUser() user: User,
+  ) {
     return this.userProfileService.removeUserProfile(+id, user);
   }
 }

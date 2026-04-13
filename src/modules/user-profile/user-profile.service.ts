@@ -35,7 +35,10 @@ export class UserProfileService {
 
     //Subo la imagen del fondo y agrego su url al DTO
     if (file2) {
-      const url2 = await this.uploadService.uploadIMG(file2, 'users/backgrounds');
+      const url2 = await this.uploadService.uploadIMG(
+        file2,
+        'users/backgrounds',
+      );
       createUserProfileDto.backgroundURL = url2;
     }
 
@@ -68,6 +71,7 @@ export class UserProfileService {
     updateUserProfileDto: UpdateUserProfileDto,
     user: User,
     file?: Express.Multer.File,
+    file2?: Express.Multer.File,
   ) {
     const profile = await this.findOneUserProfile(id);
 
@@ -88,6 +92,29 @@ export class UserProfileService {
 
       const url = await this.uploadService.uploadIMG(file, 'users/profiles');
       updateUserProfileDto.profilePictureURL = url;
+    }
+
+    if (updateUserProfileDto.removeBackground) {
+      // Borrás la imagen de Firebase
+      if (profile.backgroundURL !== null) {
+        this.uploadService.deleteImg(profile.backgroundURL);
+      }
+      updateUserProfileDto.backgroundURL = null;
+    }
+    delete updateUserProfileDto.removeBackground; 
+
+    //Actualizo la imagen de fondo si se trajo una
+    if (file2) {
+      //Borro la anterior
+      if (profile.backgroundURL !== null) {
+        this.uploadService.deleteImg(profile.backgroundURL);
+      }
+
+      const url = await this.uploadService.uploadIMG(
+        file2,
+        'users/backgrounds',
+      );
+      updateUserProfileDto.backgroundURL = url;
     }
 
     if (!updateUserProfileDto) throw new BadRequestException('Empty Body');
