@@ -36,6 +36,15 @@ export class CreateUserProfileDto {
   @IsString()
   profilePictureURL: string;
 
+    @ApiProperty({
+    example: 'https://...',
+    description: 'URL del fondo del perfil',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  backgroundURL: string | null;
+
   @ApiProperty({
     example: 1,
     description: 'ID del título del perfil',

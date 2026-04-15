@@ -22,14 +22,24 @@ export class UserProfileService {
 
   async createUserProfile(
     createUserProfileDto: CreateUserProfileDto,
-    file: Express.Multer.File,
+    file: Express.Multer.File | undefined,
+    file2: Express.Multer.File | undefined,
   ) {
     createUserProfileDto.profilePictureURL = '';
 
-    //Subo la imagen y agrego su url al DTO
+    //Subo la imagen del perfil y agrego su url al DTO
     if (file) {
       const url = await this.uploadService.uploadIMG(file, 'users/profiles');
       createUserProfileDto.profilePictureURL = url;
+    }
+
+    //Subo la imagen del fondo y agrego su url al DTO
+    if (file2) {
+      const url2 = await this.uploadService.uploadIMG(
+        file2,
+        'users/backgrounds',
+      );
+      createUserProfileDto.backgroundURL = url2;
     }
 
     return this.prisma.userProfile.create({ data: createUserProfileDto });
@@ -61,6 +71,7 @@ export class UserProfileService {
     updateUserProfileDto: UpdateUserProfileDto,
     user: User,
     file?: Express.Multer.File,
+    file2?: Express.Multer.File,
   ) {
     const profile = await this.findOneUserProfile(id);
 
@@ -81,6 +92,29 @@ export class UserProfileService {
 
       const url = await this.uploadService.uploadIMG(file, 'users/profiles');
       updateUserProfileDto.profilePictureURL = url;
+    }
+
+    if (updateUserProfileDto.removeBackground) {
+      // Borrás la imagen de Firebase
+      if (profile.backgroundURL !== null) {
+        this.uploadService.deleteImg(profile.backgroundURL);
+      }
+      updateUserProfileDto.backgroundURL = null;
+    }
+    delete updateUserProfileDto.removeBackground; 
+
+    //Actualizo la imagen de fondo si se trajo una
+    if (file2) {
+      //Borro la anterior
+      if (profile.backgroundURL !== null) {
+        this.uploadService.deleteImg(profile.backgroundURL);
+      }
+
+      const url = await this.uploadService.uploadIMG(
+        file2,
+        'users/backgrounds',
+      );
+      updateUserProfileDto.backgroundURL = url;
     }
 
     if (!updateUserProfileDto) throw new BadRequestException('Empty Body');
