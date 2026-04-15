@@ -112,6 +112,7 @@ model Project {
   descripcion String? @db.VarChar(255)
 
   active Boolean @default(true)
+  displayArt Boolean @default(false)
 
   userProfileId Int         @db.UnsignedInt
   userProfile   UserProfile @relation(fields: [userProfileId], references: [id])

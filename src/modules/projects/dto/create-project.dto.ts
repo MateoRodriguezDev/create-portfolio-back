@@ -54,6 +54,15 @@ export class CreateProjectDto {
   @IsBoolean()
   active?: boolean;
 
+    @ApiProperty({
+    example: true,
+    description: 'Indica si es un proyecto de arte',
+    required: false,
+  })
+  @IsOptional()
+  @IsBoolean()
+  displayArt?: boolean;
+
   @ApiProperty({
     example: 'https://github.com/usuario',
     description: 'Es el url del proyecto',
