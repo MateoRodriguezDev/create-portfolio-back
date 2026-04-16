@@ -26,6 +26,7 @@ export class ProjectResponseDto {
   @Expose() imgURL: string;
   @Expose() projectURL: string;
   @Expose() descripcion: string;
+  @Expose() displayArt: boolean;
 
   @Expose()
   @Type(() => ProjectTechnologyResponseDto)

@@ -51,15 +51,27 @@ export class CreateProjectDto {
     required: false,
   })
   @IsOptional()
+  @Transform(({ value }) => {
+    if (typeof value === 'string') {
+      return value.toLowerCase() === 'true';
+    }
+    return value; // Si ya es booleano, lo deja tal cual
+  })
   @IsBoolean()
   active?: boolean;
 
-    @ApiProperty({
+  @ApiProperty({
     example: true,
     description: 'Indica si es un proyecto de arte',
     required: false,
   })
   @IsOptional()
+  @Transform(({ value }) => {
+    if (typeof value === 'string') {
+      return value.toLowerCase() === 'true';
+    }
+    return value; // Si ya es booleano, lo deja tal cual
+  })
   @IsBoolean()
   displayArt?: boolean;
 

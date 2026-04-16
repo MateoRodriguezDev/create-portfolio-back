@@ -7,8 +7,8 @@ import { v4 as uuidv4 } from 'uuid';
 export class UploadFileService {
   constructor(private readonly admin: FirebaseAdmin) {}
 
-  private readonly MAX_SIZE = 2 * 1024 * 1024; // 2MB
-  private readonly ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+  private readonly MAX_SIZE = 5 * 1024 * 1024; // 2MB
+  private readonly ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
   /**
    * @description Subir imágenes (Crear o Editar)
@@ -22,6 +22,7 @@ export class UploadFileService {
 
     // Validar tipo
     if (!this.ALLOWED_TYPES.includes(file.mimetype)) {
+      console.log(file.mimetype)
       throw new BadRequestException(
         `File type not allowed. Allowed types: ${this.ALLOWED_TYPES.join(', ')}`,
       );
